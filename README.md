@@ -35,7 +35,7 @@ To utilize the programs within this repository, follow these steps:
 
 1. **Node Creation and Insertion:**
 
-   - `0-binary_tree_node.c`: Creates a new binary tree node.
+   - `0-binary_tree_node.c`: Create a new binary tree node.
    - `1-binary_tree_insert_left.c`: Inserts a new node as the left-child.
    - `2-binary_tree_insert_right.c`: Inserts a new node as the right-child.
 

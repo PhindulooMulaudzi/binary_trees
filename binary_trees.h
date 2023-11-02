@@ -6,14 +6,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* Data structures */
-
 /**
  * struct binary_tree_s - Binary tree node structure
- * @n: Integer value stored in the node
- * @parent: Pointer to the parent node
- * @left: Pointer to the left child node
- * @right: Pointer to the right child node
+ * @n: value in the node
+ * @parent: parent node
+ * @left: left child node
+ * @right: right child node
  */
 struct binary_tree_s
 {
@@ -28,9 +26,9 @@ typedef struct binary_tree_s avl_t;
 typedef struct binary_tree_s heap_t;
 
 /**
- * struct levelorder_queue_s - Structure for level order traversal queue.
- * @node: A node of a binary tree.
- * @next: Pointer to the next node in the traversal queue.
+ * struct levelorder_queue_s - level order traversal queue.
+ * @node: node.
+ * @next: pointer to next node.
  */
 typedef struct levelorder_queue_s
 {
@@ -38,11 +36,8 @@ typedef struct levelorder_queue_s
 	struct levelorder_queue_s *next;
 } levelorder_queue_t;
 
-/* Function prototypes */
-
 void binary_tree_print(const binary_tree_t *tree);
 
-/* Task function prototypes */
 binary_tree_t *binary_tree_node(binary_tree_t *parent, int value);
 binary_tree_t *binary_tree_insert_left(binary_tree_t *parent, int value);
 binary_tree_t *binary_tree_insert_right(binary_tree_t *parent, int value);

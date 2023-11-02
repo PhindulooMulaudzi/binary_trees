@@ -8,18 +8,17 @@ typedef struct levelorder_queue_s
 } levelorder_queue_t;
 
 /**
- * create_node - Creates a new levelorder_queue_t node.
- * @node: The binary tree node for the new node to contain.
+ * create_node - Create new levelorder_queue_t node.
+ * @node: node.
  *
- * Return: If an error occurs, NULL.
- *         Otherwise, a pointer to the new node.
+ * Return: new node, otherwise NULL.
  */
 levelorder_queue_t *create_node(binary_tree_t *node)
 {
 	levelorder_queue_t *new_node = malloc(sizeof(levelorder_queue_t));
 	if (new_node == NULL)
 	{
-		/* Handle memory allocation error */
+
 		return NULL;
 	}
 
@@ -31,7 +30,7 @@ levelorder_queue_t *create_node(binary_tree_t *node)
 
 /**
  * free_queue - Frees a levelorder_queue_t queue.
- * @head: A pointer to the head of the queue.
+ * @head: head of queue.
  */
 void free_queue(levelorder_queue_t *head)
 {
@@ -46,19 +45,18 @@ void free_queue(levelorder_queue_t *head)
 }
 
 /**
- * push - Pushes a node to the back of a levelorder_queue_t queue.
- * @node: The binary tree node to push.
- * @queue: A pointer to the head of the queue.
- * @tailNode: A pointer to the tail of the queue.
+ * push - Push node to back of a queue.
+ * @node: node.
+ * @queue: head of the queue.
+ * @tailNode: tail of the queue.
  *
- * Description: Handles memory allocation failure gracefully.
  */
 void push(binary_tree_t *node, levelorder_queue_t **queue, levelorder_queue_t **tailNode)
 {
 	levelorder_queue_t *new_node = create_node(node);
 	if (new_node == NULL)
 	{
-		free_queue(*queue); /* Cleanup the entire queue on error */
+		free_queue(*queue);
 		return;
 	}
 
@@ -68,19 +66,19 @@ void push(binary_tree_t *node, levelorder_queue_t **queue, levelorder_queue_t **
 	}
 	else
 	{
-		*queue = new_node; /* Update the queue head if it's empty */
+		*queue = new_node;
 	}
 	*tailNode = new_node;
 }
 
 /**
- * pop - Pops the head of a levelorder_queue_t queue.
- * @queue: A pointer to the head of the queue.
+ * pop - Pop the head of a queue.
+ * @queue: head of the queue.
  */
 void pop(levelorder_queue_t **queue)
 {
 	if (*queue == NULL)
-		return; /* No elements to pop */
+		return;
 
 	levelorder_queue_t *tmp = (*queue)->next;
 	free(*queue);
@@ -88,13 +86,10 @@ void pop(levelorder_queue_t **queue)
 }
 
 /**
- * binary_tree_is_complete - Checks if a binary tree is complete.
- * @tree: A pointer to the root node of the tree to traverse.
+ * binary_tree_is_complete - Check if binary tree is complete.
+ * @tree: root node.
  *
- * Return: If the tree is NULL or not complete, 0.
- *         Otherwise, 1.
- *
- * Description: Handles memory allocation failure gracefully.
+ * Return: 1 if complete, 0 otherwise.
  */
 int binary_tree_is_complete(const binary_tree_t *tree)
 {
@@ -108,7 +103,7 @@ int binary_tree_is_complete(const binary_tree_t *tree)
 	head = tail = create_node((binary_tree_t *)tree);
 	if (head == NULL)
 	{
-		return 0; /* Handle memory allocation error */
+		return 0;
 	}
 
 	while (head != NULL)
@@ -138,6 +133,6 @@ int binary_tree_is_complete(const binary_tree_t *tree)
 		pop(&head);
 	}
 
-	free_queue(head); /* Clean up any remaining memory */
+	free_queue(head);
 	return 1;
 }
