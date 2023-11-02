@@ -1,11 +1,11 @@
 #include "binary_trees.h"
 
-levelorder_queue_t *create_node(binary_tree_t *node);
-void free_queue(levelorder_queue_t *head);
-void push(binary_tree_t *node, levelorder_queue_t *head,
-		levelorder_queue_t **tail);
-void pop(levelorder_queue_t **head);
-int binary_tree_is_complete(const binary_tree_t *tree);
+/** Structure for the binary tree level order queue node **/
+typedef struct levelorder_queue_s
+{
+	binary_tree_t *node;
+	struct levelorder_queue_s *next;
+} levelorder_queue_t;
 
 /**
  * create_node - Creates a new levelorder_queue_t node.
@@ -16,16 +16,17 @@ int binary_tree_is_complete(const binary_tree_t *tree);
  */
 levelorder_queue_t *create_node(binary_tree_t *node)
 {
-	levelorder_queue_t *new;
+	levelorder_queue_t *new_node = malloc(sizeof(levelorder_queue_t));
+	if (new_node == NULL)
+	{
+		/* Handle memory allocation error */
+		return NULL;
+	}
 
-	new = malloc(sizeof(levelorder_queue_t));
-	if (new == NULL)
-		return (NULL);
+	new_node->node = node;
+	new_node->next = NULL;
 
-	new->node = node;
-	new->next = NULL;
-
-	return (new);
+	return new_node;
 }
 
 /**
@@ -46,38 +47,44 @@ void free_queue(levelorder_queue_t *head)
 
 /**
  * push - Pushes a node to the back of a levelorder_queue_t queue.
- * @node: The binary tree node to print and push.
- * @head: A double pointer to the head of the queue.
- * @tail: A double pointer to the tail of the queue.
+ * @node: The binary tree node to push.
+ * @queue: A pointer to the head of the queue.
+ * @tailNode: A pointer to the tail of the queue.
  *
- * Description: Upon malloc failure, exits with a status code of 1.
+ * Description: Handles memory allocation failure gracefully.
  */
-void push(binary_tree_t *node, levelorder_queue_t *head,
-		levelorder_queue_t **tail)
+void push(binary_tree_t *node, levelorder_queue_t **queue, levelorder_queue_t **tailNode)
 {
-	levelorder_queue_t *new;
-
-	new = create_node(node);
-	if (new == NULL)
+	levelorder_queue_t *new_node = create_node(node);
+	if (new_node == NULL)
 	{
-		free_queue(head);
-		exit(1);
+		free_queue(*queue); /* Cleanup the entire queue on error */
+		return;
 	}
-	(*tail)->next = new;
-	*tail = new;
+
+	if (*tailNode)
+	{
+		(*tailNode)->next = new_node;
+	}
+	else
+	{
+		*queue = new_node; /* Update the queue head if it's empty */
+	}
+	*tailNode = new_node;
 }
 
 /**
  * pop - Pops the head of a levelorder_queue_t queue.
- * @head: A double pointer to the head of the queue.
+ * @queue: A pointer to the head of the queue.
  */
-void pop(levelorder_queue_t **head)
+void pop(levelorder_queue_t **queue)
 {
-	levelorder_queue_t *tmp;
+	if (*queue == NULL)
+		return; /* No elements to pop */
 
-	tmp = (*head)->next;
-	free(*head);
-	*head = tmp;
+	levelorder_queue_t *tmp = (*queue)->next;
+	free(*queue);
+	*queue = tmp;
 }
 
 /**
@@ -87,19 +94,22 @@ void pop(levelorder_queue_t **head)
  * Return: If the tree is NULL or not complete, 0.
  *         Otherwise, 1.
  *
- * Description: Upon malloc failure, exits with a status code of 1.
+ * Description: Handles memory allocation failure gracefully.
  */
 int binary_tree_is_complete(const binary_tree_t *tree)
 {
-	levelorder_queue_t *head, *tail;
-	unsigned char flag = 0;
-
 	if (tree == NULL)
-		return (0);
+		return 0;
+
+	levelorder_queue_t *head = NULL;
+	levelorder_queue_t *tail = NULL;
+	unsigned char flag = 0;
 
 	head = tail = create_node((binary_tree_t *)tree);
 	if (head == NULL)
-		exit(1);
+	{
+		return 0; /* Handle memory allocation error */
+	}
 
 	while (head != NULL)
 	{
@@ -108,9 +118,9 @@ int binary_tree_is_complete(const binary_tree_t *tree)
 			if (flag == 1)
 			{
 				free_queue(head);
-				return (0);
+				return 0;
 			}
-			push(head->node->left, head, &tail);
+			push(head->node->left, &head, &tail);
 		}
 		else
 			flag = 1;
@@ -119,13 +129,15 @@ int binary_tree_is_complete(const binary_tree_t *tree)
 			if (flag == 1)
 			{
 				free_queue(head);
-				return (0);
+				return 0;
 			}
-			push(head->node->right, head, &tail);
+			push(head->node->right, &head, &tail);
 		}
 		else
 			flag = 1;
 		pop(&head);
 	}
-	return (1);
+
+	free_queue(head); /* Clean up any remaining memory */
+	return 1;
 }
